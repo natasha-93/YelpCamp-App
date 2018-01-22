@@ -1,8 +1,8 @@
 # YelpCamp-App
 YelpCamp app based on Colt Steele's 'Web Developer Bootcamp' course on Udemy.
+Uses Express, Node.js, MongoDB, PassportJS and Bootstrap
 
- Web Developer Bootcamp
-Syllabus
+ Web Developer Bootcamp Syllabus:
 1. Course Basics
 2. Introduction to Front End 3. Introduction to HTML
 4. Intermediate HTML
