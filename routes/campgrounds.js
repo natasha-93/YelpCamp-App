@@ -6,28 +6,32 @@ const express = require('express'),
 
 // INDEX ; show all campgrounds
 router.get('/', (req, res) => {
-	//Get all campgrounds from DB
-	Campground.find({}, (err, allCampgrounds) => {
-		if(err){
-			console.log(err);
-		} else {
-			res.render('campgrounds/index', {campgrounds: allCampgrounds});
-		}
-	})
-})
+		//get all campgrounds from DB
+		Campground.find({}, (err, allCampgrounds) => {
+			if(err){
+				console.log(err);
+			} else {
+				if(req.xhr) {
+				  res.json(allCampgrounds);
+				} else {
+				  res.render("campgrounds/index",{campgrounds: allCampgrounds, page: 'campgrounds'});
+				}
+			}
+		});
+});
 // CREATE ; add new campground to DB
-router.post('/', middleware.isLoggedIn, (req, res) => {
+router.post('/', middleware.isLoggedIn, middleware.isSafe, (req, res) => {
 	// get data from form and add to campgrounds database
 	let name = req.body.name;
 	let image = req.body.image;
-	let price = req.body.price;
 	let desc = req.body.description;
 	let author = {
 		id: req.user._id,
 		username: req.user.username
 	}
-	var newCampground = {name: name, image: image, description: desc, price: price, author: author};
-	//Create a new campground and save to DB
+	let price = req.body.price;
+    let newCampground = {name: name, image: image, description: desc, price: price, author: author};
+    // Create a new campground and save to DB
 	Campground.create(newCampground, (err, newlyCreated) => {
 		if(err){
 			console.log(err);
@@ -63,8 +67,9 @@ router.get('/:id/edit', middleware.checkCampgroundOwnership, (req, res) => {
 //UPDATE; update the campground
 router.put('/:id', middleware.checkCampgroundOwnership, (req, res) => {
 	// find and update correct campground
-	Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
+	Campground.findByIdAndUpdate(req.params.id, {$set: newData}, (err, updatedCampground) => {
 		if(err){
+			req.flash("error", err.message);
 			res.redirect('/campgrounds');
 		} else {
 			req.flash('success', 'Successfully updated campground!');
