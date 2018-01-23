@@ -17,14 +17,14 @@ const	commentRoutes 		= require('./routes/comments'),
 		indexRoutes 		= require('./routes/index');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.DATABASEURL) //local server
-//mongoose.connect("mongodb://natashalaws:ScillieS93@ds113098.mlab.com:13098/yelp-camp"); //mlab server
-process.env.databaseURL
+var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp";
+mongoose.connect(url) //local server + mlab server
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
-// seedDB(); //seed the database
+seedDB(); //seed the database
 
 // PASSPORT CONFIG
 app.use(require('express-session')({
